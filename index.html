@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carolina - Control de Horas</title>
-  <!-- 2025-04-07 15:30 ARG -->
+  <!-- 2025-04-07 16:30 ARG -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -21,11 +21,7 @@
       --shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
       font-family: 'Nunito', sans-serif;
@@ -33,6 +29,46 @@
       color: var(--text);
       min-height: 100vh;
       padding-bottom: 80px;
+    }
+    
+    /* ===== LOADING OVERLAY ===== */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(253, 248, 245, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+    
+    .loading-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    .loading-text {
+      margin-top: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     
     /* ===== HEADER ===== */
@@ -48,11 +84,7 @@
       z-index: 100;
     }
     
-    .header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary);
-    }
+    .header h1 { font-size: 20px; font-weight: 700; color: var(--primary); }
     
     .header-user {
       font-size: 13px;
@@ -91,29 +123,11 @@
       text-align: center;
     }
     
-    .login-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
+    .login-title { font-size: 28px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+    .login-subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 32px; }
+    .login-emoji { font-size: 48px; margin-bottom: 16px; }
     
-    .login-subtitle {
-      font-size: 14px;
-      color: var(--text-light);
-      margin-bottom: 32px;
-    }
-    
-    .login-emoji {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-    
-    .user-select {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+    .user-select { display: flex; gap: 12px; margin-bottom: 20px; }
     
     .user-btn {
       flex: 1;
@@ -131,20 +145,10 @@
       background: rgba(232, 146, 124, 0.1);
     }
     
-    .user-btn span {
-      display: block;
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
+    .user-btn span { display: block; font-size: 24px; margin-bottom: 4px; }
+    .user-btn small { font-size: 12px; color: var(--text-light); }
     
-    .user-btn small {
-      font-size: 12px;
-      color: var(--text-light);
-    }
-    
-    .input-group {
-      margin-bottom: 20px;
-    }
+    .input-group { margin-bottom: 20px; }
     
     .input-group input {
       width: 100%;
@@ -158,10 +162,7 @@
       transition: border-color 0.2s;
     }
     
-    .input-group input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
+    .input-group input:focus { outline: none; border-color: var(--primary); }
     
     .btn-primary {
       width: 100%;
@@ -177,27 +178,13 @@
       transition: background 0.2s;
     }
     
-    .btn-primary:hover {
-      background: var(--primary-dark);
-    }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:disabled { background: var(--border); cursor: not-allowed; }
     
-    .btn-primary:disabled {
-      background: var(--border);
-      cursor: not-allowed;
-    }
-    
-    .error-msg {
-      color: #E57373;
-      font-size: 13px;
-      margin-top: 12px;
-    }
+    .error-msg { color: #E57373; font-size: 13px; margin-top: 12px; }
     
     /* ===== MAIN APP ===== */
-    .main-content {
-      padding: 20px;
-      max-width: 600px;
-      margin: 0 auto;
-    }
+    .main-content { padding: 20px; max-width: 600px; margin: 0 auto; }
     
     /* ===== CARDS ===== */
     .card {
@@ -218,11 +205,7 @@
     }
     
     /* ===== RESUMEN ===== */
-    .resumen-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
     .resumen-item {
       text-align: center;
@@ -231,29 +214,11 @@
       border-radius: 12px;
     }
     
-    .resumen-item.full {
-      grid-column: 1 / -1;
-    }
-    
-    .resumen-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    
-    .resumen-value.success {
-      color: var(--success);
-    }
-    
-    .resumen-value.warning {
-      color: var(--warning);
-    }
-    
-    .resumen-label {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 4px;
-    }
+    .resumen-item.full { grid-column: 1 / -1; }
+    .resumen-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+    .resumen-value.success { color: var(--success); }
+    .resumen-value.warning { color: var(--warning); }
+    .resumen-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
     
     /* ===== MES SELECTOR ===== */
     .mes-selector {
@@ -277,18 +242,8 @@
       transition: all 0.2s;
     }
     
-    .mes-btn:hover {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .mes-actual {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      min-width: 160px;
-      text-align: center;
-    }
+    .mes-btn:hover { background: var(--primary); color: white; }
+    .mes-actual { font-size: 18px; font-weight: 700; color: var(--text); min-width: 160px; text-align: center; }
     
     /* ===== REGISTROS ===== */
     .registro-item {
@@ -299,38 +254,9 @@
       border-bottom: 1px solid var(--border);
     }
     
-    .registro-item:last-child {
-      border-bottom: none;
-    }
-    
-    .registro-fecha {
-      font-size: 14px;
-      color: var(--text);
-    }
-    
-    .registro-dia {
-      font-size: 12px;
-      color: var(--text-light);
-    }
-    
-    .registro-tipo {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 20px;
-      background: rgba(124, 184, 168, 0.2);
-      color: var(--secondary);
-    }
-    
-    .registro-tipo.limpieza {
-      background: rgba(245, 200, 122, 0.2);
-      color: #C49A3C;
-    }
-    
-    .registro-horas {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-    }
+    .registro-item:last-child { border-bottom: none; }
+    .registro-fecha { font-size: 14px; color: var(--text); }
+    .registro-horas { font-size: 18px; font-weight: 700; color: var(--primary); }
     
     .registro-delete {
       background: none;
@@ -343,43 +269,17 @@
       transition: opacity 0.2s;
     }
     
-    .registro-delete:hover {
-      opacity: 1;
-    }
+    .registro-delete:hover { opacity: 1; }
     
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-light);
-    }
-    
-    .empty-state span {
-      font-size: 48px;
-      display: block;
-      margin-bottom: 12px;
-    }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+    .empty-state span { font-size: 48px; display: block; margin-bottom: 12px; }
     
     /* ===== FORM REGISTRAR ===== */
-    .form-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
+    .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .form-group { flex: 1; min-width: 140px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; }
     
-    .form-group {
-      flex: 1;
-    }
-    
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-light);
-      margin-bottom: 6px;
-    }
-    
-    .form-group input,
-    .form-group select {
+    .form-group input, .form-group select {
       width: 100%;
       padding: 12px;
       border: 2px solid var(--border);
@@ -389,11 +289,7 @@
       background: var(--card);
     }
     
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
     
     .btn-secondary {
       width: 100%;
@@ -409,9 +305,7 @@
       transition: opacity 0.2s;
     }
     
-    .btn-secondary:hover {
-      opacity: 0.9;
-    }
+    .btn-secondary:hover { opacity: 0.9; }
     
     /* ===== TABS (ADMIN) ===== */
     .tabs {
@@ -438,18 +332,9 @@
       transition: all 0.2s;
     }
     
-    .tab-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .tab-content {
-      display: none;
-    }
-    
-    .tab-content.active {
-      display: block;
-    }
+    .tab-btn.active { background: var(--primary); color: white; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
     
     /* ===== HISTORIAL ===== */
     .historial-item {
@@ -462,35 +347,12 @@
       margin-bottom: 10px;
     }
     
-    .historial-mes {
-      font-weight: 700;
-      font-size: 15px;
-    }
-    
-    .historial-horas {
-      font-size: 13px;
-      color: var(--text-light);
-    }
-    
-    .historial-monto {
-      text-align: right;
-    }
-    
-    .historial-cobrar {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    
-    .historial-pagado {
-      font-size: 12px;
-      color: var(--success);
-    }
-    
-    .historial-pendiente {
-      font-size: 12px;
-      color: var(--warning);
-    }
+    .historial-mes { font-weight: 700; font-size: 15px; }
+    .historial-horas { font-size: 13px; color: var(--text-light); }
+    .historial-monto { text-align: right; }
+    .historial-cobrar { font-size: 15px; font-weight: 700; color: var(--primary); }
+    .historial-pagado { font-size: 12px; color: var(--success); }
+    .historial-pendiente { font-size: 12px; color: var(--warning); }
     
     /* ===== CONFIG ===== */
     .config-item {
@@ -501,20 +363,9 @@
       border-bottom: 1px solid var(--border);
     }
     
-    .config-item:last-child {
-      border-bottom: none;
-    }
-    
-    .config-label {
-      font-size: 14px;
-      color: var(--text);
-    }
-    
-    .config-value {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .config-item:last-child { border-bottom: none; }
+    .config-label { font-size: 14px; color: var(--text); }
+    .config-value { display: flex; align-items: center; gap: 8px; }
     
     .config-value input {
       width: 120px;
@@ -526,10 +377,7 @@
       text-align: right;
     }
     
-    .config-value input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
+    .config-value input:focus { outline: none; border-color: var(--primary); }
     
     .btn-small {
       padding: 8px 16px;
@@ -546,9 +394,7 @@
     /* ===== BOTTOM NAV ===== */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       background: var(--card);
       border-top: 1px solid var(--border);
       display: flex;
@@ -573,34 +419,8 @@
       transition: color 0.2s;
     }
     
-    .nav-btn span {
-      font-size: 22px;
-    }
-    
-    .nav-btn.active {
-      color: var(--primary);
-    }
-    
-    /* ===== LOADING ===== */
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-light);
-    }
-    
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--border);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 12px;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    .nav-btn span { font-size: 22px; }
+    .nav-btn.active { color: var(--primary); }
     
     /* ===== TOAST ===== */
     .toast {
@@ -620,17 +440,17 @@
       z-index: 1000;
     }
     
-    .toast.show {
-      opacity: 1;
-    }
-    
-    /* ===== HIDE ===== */
-    .hidden {
-      display: none !important;
-    }
+    .toast.show { opacity: 1; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Cargando...</div>
+</div>
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="loginScreen" class="login-container">
@@ -654,7 +474,7 @@
       <input type="password" id="pinInput" placeholder="PIN" maxlength="4" inputmode="numeric">
     </div>
     
-    <button class="btn-primary" onclick="doLogin()" id="btnLogin">Entrar</button>
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
     <p class="error-msg hidden" id="loginError"></p>
   </div>
 </div>
@@ -714,15 +534,6 @@
           <div class="form-group">
             <label>Horas</label>
             <input type="number" id="inputHoras" step="0.5" min="0.5" max="12" placeholder="4">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Tipo</label>
-            <select id="inputTipo">
-              <option value="Cuidado">🧒 Cuidado de las chicas</option>
-              <option value="Limpieza">🧹 Limpieza</option>
-            </select>
           </div>
         </div>
         <button class="btn-secondary" onclick="registrarHoras()">+ Agregar registro</button>
@@ -792,11 +603,6 @@
           </div>
           <button class="btn-secondary" onclick="registrarPago()">Guardar pago</button>
         </div>
-        
-        <div class="card">
-          <div class="card-title">Desglose del mes</div>
-          <div id="desgloseMes"></div>
-        </div>
       </div>
       
       <!-- Tab: Config -->
@@ -851,21 +657,26 @@ var precioHora = 4500;
 
 var MESES = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-var DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+var DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
 // ============== API ==============
-function apiCall(data) {
+function apiCall(data, loadingMsg) {
+  if (loadingMsg) showLoading(loadingMsg);
+  
   return new Promise(function(resolve, reject) {
     var formData = new FormData();
     formData.append('payload', JSON.stringify(data));
     
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: formData
-    })
-    .then(function(r) { return r.json(); })
-    .then(resolve)
-    .catch(reject);
+    fetch(SCRIPT_URL, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        hideLoading();
+        resolve(res);
+      })
+      .catch(function(err) {
+        hideLoading();
+        reject(err);
+      });
   });
 }
 
@@ -886,10 +697,7 @@ function doLogin() {
     return;
   }
   
-  document.getElementById('btnLogin').disabled = true;
-  document.getElementById('btnLogin').textContent = 'Entrando...';
-  
-  apiCall({action: 'login', user: user, pin: pin})
+  apiCall({action: 'login', user: user, pin: pin}, 'Verificando...')
     .then(function(res) {
       if (res.ok) {
         currentRole = res.role;
@@ -901,10 +709,6 @@ function doLogin() {
     })
     .catch(function() {
       showError('Error de conexión');
-    })
-    .finally(function() {
-      document.getElementById('btnLogin').disabled = false;
-      document.getElementById('btnLogin').textContent = 'Entrar';
     });
 }
 
@@ -943,9 +747,7 @@ function showApp() {
     document.getElementById('bottomNav').classList.add('hidden');
   }
   
-  // Set default date
   document.getElementById('inputFecha').value = new Date().toISOString().split('T')[0];
-  
   updateMesDisplay();
   loadResumen();
   loadRegistros();
@@ -958,13 +760,8 @@ function updateMesDisplay() {
 
 function cambiarMes(delta) {
   currentMes += delta;
-  if (currentMes > 12) {
-    currentMes = 1;
-    currentAnio++;
-  } else if (currentMes < 1) {
-    currentMes = 12;
-    currentAnio--;
-  }
+  if (currentMes > 12) { currentMes = 1; currentAnio++; }
+  else if (currentMes < 1) { currentMes = 12; currentAnio--; }
   updateMesDisplay();
   loadResumen();
   loadRegistros();
@@ -972,36 +769,22 @@ function cambiarMes(delta) {
 
 // ============== RESUMEN ==============
 function loadResumen() {
-  apiCall({action: 'getResumenMensual', mes: currentMes, anio: currentAnio})
+  apiCall({action: 'getResumenMensual', mes: currentMes, anio: currentAnio}, 'Cargando resumen...')
     .then(function(res) {
       if (res.ok) {
         precioHora = res.precioHora;
         
-        // Carolina view
         document.getElementById('totalHoras').textContent = res.totalHoras;
         document.getElementById('precioHora').textContent = formatMoney(res.precioHora);
         document.getElementById('montoCobrar').textContent = formatMoney(res.montoCobrar);
         
-        // Admin view
         if (currentRole === 'admin') {
           document.getElementById('adminTotalHoras').textContent = res.totalHoras;
           document.getElementById('adminPrecioHora').textContent = formatMoney(res.precioHora);
           document.getElementById('adminMontoCobrar').textContent = formatMoney(res.montoCobrar);
           document.getElementById('adminMontoPagado').textContent = formatMoney(res.montoPagado);
-          
           document.getElementById('inputMontoPago').value = res.montoPagado || '';
           document.getElementById('inputFechaPago').value = res.fechaPago || new Date().toISOString().split('T')[0];
-          
-          // Desglose
-          var desglose = '<div class="historial-item">' +
-            '<div><div class="historial-mes">Cuidado</div><div class="historial-horas">' + res.horasCuidado + ' horas</div></div>' +
-            '<div class="historial-cobrar">' + formatMoney(res.horasCuidado * res.precioHora) + '</div>' +
-          '</div>' +
-          '<div class="historial-item">' +
-            '<div><div class="historial-mes">Limpieza</div><div class="historial-horas">' + res.horasLimpieza + ' horas</div></div>' +
-            '<div class="historial-cobrar">' + formatMoney(res.horasLimpieza * res.precioHora) + '</div>' +
-          '</div>';
-          document.getElementById('desgloseMes').innerHTML = desglose;
         }
       }
     });
@@ -1010,9 +793,8 @@ function loadResumen() {
 // ============== REGISTROS ==============
 function loadRegistros() {
   var container = document.getElementById('registrosList');
-  container.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
   
-  apiCall({action: 'getHorasMes', mes: currentMes, anio: currentAnio})
+  apiCall({action: 'getHorasMes', mes: currentMes, anio: currentAnio}, 'Cargando registros...')
     .then(function(res) {
       if (res.ok) {
         if (res.registros.length === 0) {
@@ -1022,17 +804,13 @@ function loadRegistros() {
         
         var html = '';
         res.registros.forEach(function(r) {
-          var fecha = new Date(r.fecha + 'T12:00:00');
+          var partes = r.fecha.split('/');
+          var fecha = new Date(partes[2], partes[1] - 1, partes[0]);
           var dia = DIAS[fecha.getDay()];
-          var fechaStr = fecha.getDate() + '/' + (fecha.getMonth() + 1);
-          var tipoClass = r.tipo === 'Limpieza' ? 'limpieza' : '';
-          var tipoIcon = r.tipo === 'Limpieza' ? '🧹' : '🧒';
+          var fechaStr = partes[0] + '/' + partes[1];
           
           html += '<div class="registro-item">' +
-            '<div>' +
-              '<div class="registro-fecha">' + dia + ' ' + fechaStr + '</div>' +
-              '<span class="registro-tipo ' + tipoClass + '">' + tipoIcon + ' ' + r.tipo + '</span>' +
-            '</div>' +
+            '<div class="registro-fecha">' + dia + ' ' + fechaStr + '</div>' +
             '<div style="display:flex;align-items:center;gap:8px;">' +
               '<span class="registro-horas">' + r.horas + 'h</span>' +
               '<button class="registro-delete" onclick="eliminarRegistro(' + r.id + ')">×</button>' +
@@ -1047,14 +825,13 @@ function loadRegistros() {
 function registrarHoras() {
   var fecha = document.getElementById('inputFecha').value;
   var horas = parseFloat(document.getElementById('inputHoras').value);
-  var tipo = document.getElementById('inputTipo').value;
   
   if (!fecha || !horas) {
     showToast('Completá fecha y horas');
     return;
   }
   
-  apiCall({action: 'registrarHoras', fecha: fecha, horas: horas, tipo: tipo})
+  apiCall({action: 'registrarHoras', fecha: fecha, horas: horas}, 'Guardando...')
     .then(function(res) {
       if (res.ok) {
         showToast('Registro guardado ✓');
@@ -1068,7 +845,7 @@ function registrarHoras() {
 function eliminarRegistro(id) {
   if (!confirm('¿Eliminar este registro?')) return;
   
-  apiCall({action: 'eliminarRegistro', id: id})
+  apiCall({action: 'eliminarRegistro', id: id}, 'Eliminando...')
     .then(function(res) {
       if (res.ok) {
         showToast('Registro eliminado');
@@ -1080,12 +857,8 @@ function eliminarRegistro(id) {
 
 // ============== ADMIN ==============
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-  });
-  document.querySelectorAll('.tab-content').forEach(function(content) {
-    content.classList.remove('active');
-  });
+  document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
   
   event.target.classList.add('active');
   document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
@@ -1094,9 +867,7 @@ function switchTab(tab) {
 }
 
 function navTo(section) {
-  document.querySelectorAll('.nav-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-  });
+  document.querySelectorAll('.nav-btn').forEach(function(btn) { btn.classList.remove('active'); });
   document.getElementById('nav' + section.charAt(0).toUpperCase() + section.slice(1)).classList.add('active');
   
   if (section === 'horas') {
@@ -1110,7 +881,7 @@ function navTo(section) {
 }
 
 function loadHistorial() {
-  apiCall({action: 'getHistorial'})
+  apiCall({action: 'getHistorial'}, 'Cargando historial...')
     .then(function(res) {
       if (res.ok) {
         var html = '';
@@ -1145,7 +916,7 @@ function registrarPago() {
     return;
   }
   
-  apiCall({action: 'registrarPago', mes: currentMes, anio: currentAnio, monto: monto, fecha: fecha})
+  apiCall({action: 'registrarPago', mes: currentMes, anio: currentAnio, monto: monto, fecha: fecha}, 'Guardando pago...')
     .then(function(res) {
       if (res.ok) {
         showToast('Pago registrado ✓');
@@ -1172,7 +943,7 @@ function guardarConfig() {
     return;
   }
   
-  apiCall({action: 'setConfig', precioHora: precio})
+  apiCall({action: 'setConfig', precioHora: precio}, 'Guardando...')
     .then(function(res) {
       if (res.ok) {
         showToast('Configuración guardada ✓');
@@ -1186,13 +957,20 @@ function formatMoney(n) {
   return '$' + Math.round(n || 0).toLocaleString('es-AR');
 }
 
+function showLoading(msg) {
+  document.getElementById('loadingText').textContent = msg || 'Cargando...';
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
 function showToast(msg) {
   var toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.classList.add('show');
-  setTimeout(function() {
-    toast.classList.remove('show');
-  }, 2500);
+  setTimeout(function() { toast.classList.remove('show'); }, 2500);
 }
 
 // ============== INIT ==============
