@@ -275,8 +275,8 @@
     .empty-state span { font-size: 48px; display: block; margin-bottom: 12px; }
     
     /* ===== FORM REGISTRAR ===== */
-    .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-    .form-group { flex: 1; min-width: 140px; }
+    .form-row { margin-bottom: 12px; }
+    .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; }
     
     .form-group input, .form-group select {
@@ -290,6 +290,40 @@
     }
     
     .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+    
+    /* Horas con botones +/- */
+    .horas-control {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .horas-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--card);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .horas-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .horas-btn:active { transform: scale(0.95); }
+    
+    .horas-display {
+      flex: 1;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
     
     .btn-secondary {
       width: 100%;
@@ -526,15 +560,18 @@
       <!-- Registrar horas -->
       <div class="card">
         <div class="card-title">Registrar horas</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Fecha</label>
-            <input type="date" id="inputFecha">
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" id="inputFecha">
+        </div>
+        <div class="form-group">
+          <label>Horas</label>
+          <div class="horas-control">
+            <button type="button" class="horas-btn" onclick="ajustarHoras(-0.5)">−</button>
+            <div class="horas-display" id="horasDisplay">4</div>
+            <button type="button" class="horas-btn" onclick="ajustarHoras(0.5)">+</button>
           </div>
-          <div class="form-group">
-            <label>Horas</label>
-            <input type="number" id="inputHoras" step="0.5" min="0.5" max="12" placeholder="4">
-          </div>
+          <input type="hidden" id="inputHoras" value="4">
         </div>
         <button class="btn-secondary" onclick="registrarHoras()">+ Agregar registro</button>
       </div>
@@ -804,10 +841,23 @@ function loadRegistros() {
         
         var html = '';
         res.registros.forEach(function(r) {
-          var partes = r.fecha.split('/');
-          var fecha = new Date(partes[2], partes[1] - 1, partes[0]);
+          var fecha, dd, mm;
+          
+          // Manejar formato DD/MM/YYYY o YYYY-MM-DD
+          if (r.fecha.indexOf('/') > -1) {
+            var partes = r.fecha.split('/');
+            dd = partes[0];
+            mm = partes[1];
+            fecha = new Date(partes[2], partes[1] - 1, partes[0]);
+          } else {
+            var partes = r.fecha.split('-');
+            dd = partes[2];
+            mm = partes[1];
+            fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+          }
+          
           var dia = DIAS[fecha.getDay()];
-          var fechaStr = partes[0] + '/' + partes[1];
+          var fechaStr = dd + '/' + mm;
           
           html += '<div class="registro-item">' +
             '<div class="registro-fecha">' + dia + ' ' + fechaStr + '</div>' +
@@ -820,6 +870,16 @@ function loadRegistros() {
         container.innerHTML = html;
       }
     });
+}
+
+function ajustarHoras(delta) {
+  var input = document.getElementById('inputHoras');
+  var display = document.getElementById('horasDisplay');
+  var valor = parseFloat(input.value) + delta;
+  if (valor < 0.5) valor = 0.5;
+  if (valor > 12) valor = 12;
+  input.value = valor;
+  display.textContent = valor;
 }
 
 function registrarHoras() {
@@ -835,7 +895,8 @@ function registrarHoras() {
     .then(function(res) {
       if (res.ok) {
         showToast('Registro guardado ✓');
-        document.getElementById('inputHoras').value = '';
+        document.getElementById('inputHoras').value = '4';
+        document.getElementById('horasDisplay').textContent = '4';
         loadRegistros();
         loadResumen();
       }
