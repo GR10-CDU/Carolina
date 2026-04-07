@@ -308,16 +308,21 @@
     .horas-control {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 0;
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 4px;
+      max-width: 200px;
     }
     
     .horas-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      border: none;
       background: var(--card);
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--primary);
       cursor: pointer;
@@ -325,17 +330,24 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     
-    .horas-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .horas-btn:hover { background: var(--primary); color: white; }
     .horas-btn:active { transform: scale(0.95); }
     
     .horas-display {
-      flex: 1;
+      width: 80px;
       text-align: center;
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 700;
       color: var(--primary);
+    }
+    
+    .horas-unit {
+      font-size: 16px;
+      color: var(--text-light);
+      margin-left: 2px;
     }
     
     .btn-secondary {
@@ -581,12 +593,14 @@
           <label>Horas</label>
           <div class="horas-control">
             <button type="button" class="horas-btn" onclick="ajustarHoras(-0.5)">−</button>
-            <div class="horas-display" id="horasDisplay">4</div>
+            <div class="horas-display"><span id="horasDisplay">4</span><span class="horas-unit">h</span></div>
             <button type="button" class="horas-btn" onclick="ajustarHoras(0.5)">+</button>
           </div>
           <input type="hidden" id="inputHoras" value="4">
         </div>
-        <button class="btn-secondary" onclick="registrarHoras()">+ Agregar registro</button>
+        <div style="margin-top:16px;">
+          <button class="btn-secondary" onclick="registrarHoras()">+ Agregar registro</button>
+        </div>
       </div>
       
       <!-- Lista de registros -->
