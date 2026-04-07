@@ -196,6 +196,23 @@
     
     .error-msg { color: #E57373; font-size: 13px; margin-top: 12px; }
     
+    .remember-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    
+    .remember-check input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+    
     /* ===== MAIN APP ===== */
     .main-content { padding: 20px; max-width: 600px; margin: 0 auto; }
     
@@ -533,6 +550,11 @@
       <input type="password" id="pinInput" placeholder="PIN" maxlength="4" inputmode="numeric">
     </div>
     
+    <label class="remember-check">
+      <input type="checkbox" id="rememberMe" checked>
+      <span>Recordarme en este dispositivo</span>
+    </label>
+    
     <button class="btn-primary" onclick="doLogin()">Entrar</button>
     <p class="error-msg hidden" id="loginError"></p>
   </div>
@@ -755,6 +777,7 @@ function selectUser(user) {
 function doLogin() {
   var pin = document.getElementById('pinInput').value;
   var user = currentUser || 'carolina';
+  var remember = document.getElementById('rememberMe').checked;
   
   if (!pin) {
     showError('Ingresá el PIN');
@@ -766,6 +789,18 @@ function doLogin() {
       if (res.ok) {
         currentRole = res.role;
         currentUser = user;
+        
+        // Guardar sesión si "Recordarme" está activo
+        if (remember) {
+          localStorage.setItem('carolina_user', user);
+          localStorage.setItem('carolina_pin', btoa(pin)); // Codificar en base64
+          localStorage.setItem('carolina_remember', 'true');
+        } else {
+          localStorage.removeItem('carolina_user');
+          localStorage.removeItem('carolina_pin');
+          localStorage.removeItem('carolina_remember');
+        }
+        
         showApp();
       } else {
         showError(res.error || 'PIN incorrecto');
@@ -774,6 +809,39 @@ function doLogin() {
     .catch(function() {
       showError('Error de conexión');
     });
+}
+
+function tryAutoLogin() {
+  var savedUser = localStorage.getItem('carolina_user');
+  var savedPin = localStorage.getItem('carolina_pin');
+  var remember = localStorage.getItem('carolina_remember');
+  
+  if (remember === 'true' && savedUser && savedPin) {
+    currentUser = savedUser;
+    var pin = atob(savedPin); // Decodificar base64
+    
+    apiCall({action: 'login', user: savedUser, pin: pin}, 'Entrando...')
+      .then(function(res) {
+        if (res.ok) {
+          currentRole = res.role;
+          showApp();
+        } else {
+          // PIN cambió, limpiar y mostrar login
+          localStorage.removeItem('carolina_user');
+          localStorage.removeItem('carolina_pin');
+          localStorage.removeItem('carolina_remember');
+          selectUser('carolina');
+        }
+      })
+      .catch(function() {
+        selectUser('carolina');
+      });
+  } else {
+    // Cargar último usuario usado si existe
+    if (savedUser) {
+      selectUser(savedUser);
+    }
+  }
 }
 
 function showError(msg) {
@@ -785,10 +853,18 @@ function showError(msg) {
 function doLogout() {
   currentUser = null;
   currentRole = null;
+  
+  // Limpiar sesión guardada
+  localStorage.removeItem('carolina_user');
+  localStorage.removeItem('carolina_pin');
+  localStorage.removeItem('carolina_remember');
+  
   document.getElementById('pinInput').value = '';
   document.getElementById('loginError').classList.add('hidden');
+  document.getElementById('rememberMe').checked = true;
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('appScreen').classList.add('hidden');
+  selectUser('carolina');
 }
 
 // ============== APP ==============
@@ -1066,7 +1142,8 @@ document.getElementById('pinInput').addEventListener('keypress', function(e) {
   if (e.key === 'Enter') doLogin();
 });
 
-selectUser('carolina');
+// Intentar auto-login si hay sesión guardada
+tryAutoLogin();
 </script>
 
 </body>
