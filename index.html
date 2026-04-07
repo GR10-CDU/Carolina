@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carolina - Control de Horas</title>
+  <!-- 2025-04-07 15:30 ARG -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #E8927C;
+      --primary-dark: #D4785F;
+      --secondary: #7CB8A8;
+      --bg: #FDF8F5;
+      --card: #FFFFFF;
+      --text: #4A4A4A;
+      --text-light: #888888;
+      --border: #E8E0DC;
+      --success: #7CB8A8;
+      --warning: #F5C87A;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+    
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--card);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .header-user {
+      font-size: 13px;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-logout {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    
+    /* ===== LOGIN ===== */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .login-box {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+    
+    .login-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    
+    .login-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 32px;
+    }
+    
+    .login-emoji {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .user-select {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .user-btn {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    
+    .user-btn.active {
+      border-color: var(--primary);
+      background: rgba(232, 146, 124, 0.1);
+    }
+    
+    .user-btn span {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    
+    .user-btn small {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      text-align: center;
+      letter-spacing: 8px;
+      transition: border-color 0.2s;
+    }
+    
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+    
+    .btn-primary:disabled {
+      background: var(--border);
+      cursor: not-allowed;
+    }
+    
+    .error-msg {
+      color: #E57373;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+    
+    /* ===== MAIN APP ===== */
+    .main-content {
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* ===== RESUMEN ===== */
+    .resumen-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    .resumen-item {
+      text-align: center;
+      padding: 16px 12px;
+      background: var(--bg);
+      border-radius: 12px;
+    }
+    
+    .resumen-item.full {
+      grid-column: 1 / -1;
+    }
+    
+    .resumen-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .resumen-value.success {
+      color: var(--success);
+    }
+    
+    .resumen-value.warning {
+      color: var(--warning);
+    }
+    
+    .resumen-label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    
+    /* ===== MES SELECTOR ===== */
+    .mes-selector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .mes-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--card);
+      color: var(--text);
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.2s;
+    }
+    
+    .mes-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .mes-actual {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      min-width: 160px;
+      text-align: center;
+    }
+    
+    /* ===== REGISTROS ===== */
+    .registro-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .registro-item:last-child {
+      border-bottom: none;
+    }
+    
+    .registro-fecha {
+      font-size: 14px;
+      color: var(--text);
+    }
+    
+    .registro-dia {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .registro-tipo {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(124, 184, 168, 0.2);
+      color: var(--secondary);
+    }
+    
+    .registro-tipo.limpieza {
+      background: rgba(245, 200, 122, 0.2);
+      color: #C49A3C;
+    }
+    
+    .registro-horas {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .registro-delete {
+      background: none;
+      border: none;
+      color: #E57373;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px 8px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    
+    .registro-delete:hover {
+      opacity: 1;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+    
+    .empty-state span {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    
+    /* ===== FORM REGISTRAR ===== */
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .form-group {
+      flex: 1;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 6px;
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--card);
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      opacity: 0.9;
+    }
+    
+    /* ===== TABS (ADMIN) ===== */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: var(--card);
+      padding: 6px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* ===== HISTORIAL ===== */
+    .historial-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    
+    .historial-mes {
+      font-weight: 700;
+      font-size: 15px;
+    }
+    
+    .historial-horas {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+    
+    .historial-monto {
+      text-align: right;
+    }
+    
+    .historial-cobrar {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .historial-pagado {
+      font-size: 12px;
+      color: var(--success);
+    }
+    
+    .historial-pendiente {
+      font-size: 12px;
+      color: var(--warning);
+    }
+    
+    /* ===== CONFIG ===== */
+    .config-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .config-item:last-child {
+      border-bottom: none;
+    }
+    
+    .config-label {
+      font-size: 14px;
+      color: var(--text);
+    }
+    
+    .config-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .config-value input {
+      width: 120px;
+      padding: 8px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      text-align: right;
+    }
+    
+    .config-value input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .btn-small {
+      padding: 8px 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      padding: 12px 20px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    
+    .nav-btn {
+      flex: 1;
+      max-width: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    
+    .nav-btn span {
+      font-size: 22px;
+    }
+    
+    .nav-btn.active {
+      color: var(--primary);
+    }
+    
+    /* ===== LOADING ===== */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+    
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      opacity: 1;
+    }
+    
+    /* ===== HIDE ===== */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen" class="login-container">
+  <div class="login-box">
+    <div class="login-emoji">🏠</div>
+    <h1 class="login-title">Hola!</h1>
+    <p class="login-subtitle">Control de horas de Carolina</p>
+    
+    <div class="user-select">
+      <button class="user-btn active" onclick="selectUser('carolina')" id="btnCarolina">
+        <span>👩</span>
+        <small>Carolina</small>
+      </button>
+      <button class="user-btn" onclick="selectUser('admin')" id="btnAdmin">
+        <span>👨‍💼</span>
+        <small>Admin</small>
+      </button>
+    </div>
+    
+    <div class="input-group">
+      <input type="password" id="pinInput" placeholder="PIN" maxlength="4" inputmode="numeric">
+    </div>
+    
+    <button class="btn-primary" onclick="doLogin()" id="btnLogin">Entrar</button>
+    <p class="error-msg hidden" id="loginError"></p>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="appScreen" class="hidden">
+  
+  <!-- Header -->
+  <div class="header">
+    <h1>🏠 Carolina</h1>
+    <div class="header-user">
+      <span id="userDisplay"></span>
+      <button class="btn-logout" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+  
+  <!-- Content -->
+  <div class="main-content">
+    
+    <!-- Mes Selector -->
+    <div class="mes-selector">
+      <button class="mes-btn" onclick="cambiarMes(-1)">←</button>
+      <div class="mes-actual" id="mesDisplay"></div>
+      <button class="mes-btn" onclick="cambiarMes(1)">→</button>
+    </div>
+    
+    <!-- ===== CAROLINA VIEW ===== -->
+    <div id="carolinaView">
+      
+      <!-- Resumen del mes -->
+      <div class="card">
+        <div class="card-title">Resumen del mes</div>
+        <div class="resumen-grid">
+          <div class="resumen-item">
+            <div class="resumen-value" id="totalHoras">0</div>
+            <div class="resumen-label">Horas totales</div>
+          </div>
+          <div class="resumen-item">
+            <div class="resumen-value" id="precioHora">$0</div>
+            <div class="resumen-label">Por hora</div>
+          </div>
+          <div class="resumen-item full">
+            <div class="resumen-value success" id="montoCobrar">$0</div>
+            <div class="resumen-label">A cobrar este mes</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Registrar horas -->
+      <div class="card">
+        <div class="card-title">Registrar horas</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" id="inputFecha">
+          </div>
+          <div class="form-group">
+            <label>Horas</label>
+            <input type="number" id="inputHoras" step="0.5" min="0.5" max="12" placeholder="4">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="inputTipo">
+              <option value="Cuidado">🧒 Cuidado de las chicas</option>
+              <option value="Limpieza">🧹 Limpieza</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="registrarHoras()">+ Agregar registro</button>
+      </div>
+      
+      <!-- Lista de registros -->
+      <div class="card">
+        <div class="card-title">Registros del mes</div>
+        <div id="registrosList"></div>
+      </div>
+      
+    </div>
+    
+    <!-- ===== ADMIN VIEW ===== -->
+    <div id="adminView" class="hidden">
+      
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('resumen')">Resumen</button>
+        <button class="tab-btn" onclick="switchTab('pagos')">Pagos</button>
+        <button class="tab-btn" onclick="switchTab('config')">Config</button>
+      </div>
+      
+      <!-- Tab: Resumen -->
+      <div id="tabResumen" class="tab-content active">
+        <div class="card">
+          <div class="card-title">Resumen del mes</div>
+          <div class="resumen-grid">
+            <div class="resumen-item">
+              <div class="resumen-value" id="adminTotalHoras">0</div>
+              <div class="resumen-label">Horas totales</div>
+            </div>
+            <div class="resumen-item">
+              <div class="resumen-value" id="adminPrecioHora">$0</div>
+              <div class="resumen-label">Por hora</div>
+            </div>
+            <div class="resumen-item">
+              <div class="resumen-value" id="adminMontoCobrar">$0</div>
+              <div class="resumen-label">A cobrar</div>
+            </div>
+            <div class="resumen-item">
+              <div class="resumen-value success" id="adminMontoPagado">$0</div>
+              <div class="resumen-label">Pagado</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Historial</div>
+          <div id="historialList"></div>
+        </div>
+      </div>
+      
+      <!-- Tab: Pagos -->
+      <div id="tabPagos" class="tab-content">
+        <div class="card">
+          <div class="card-title">Registrar pago de este mes</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Monto pagado</label>
+              <input type="number" id="inputMontoPago" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Fecha de pago</label>
+              <input type="date" id="inputFechaPago">
+            </div>
+          </div>
+          <button class="btn-secondary" onclick="registrarPago()">Guardar pago</button>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Desglose del mes</div>
+          <div id="desgloseMes"></div>
+        </div>
+      </div>
+      
+      <!-- Tab: Config -->
+      <div id="tabConfig" class="tab-content">
+        <div class="card">
+          <div class="card-title">Configuración</div>
+          <div class="config-item">
+            <span class="config-label">Precio por hora</span>
+            <div class="config-value">
+              <input type="number" id="configPrecioHora" placeholder="4500">
+              <button class="btn-small" onclick="guardarConfig()">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  <!-- Bottom Nav (only for Admin) -->
+  <div class="bottom-nav hidden" id="bottomNav">
+    <button class="nav-btn active" onclick="navTo('horas')" id="navHoras">
+      <span>📝</span>
+      Horas
+    </button>
+    <button class="nav-btn" onclick="navTo('resumen')" id="navResumen">
+      <span>📊</span>
+      Resumen
+    </button>
+    <button class="nav-btn" onclick="navTo('pagos')" id="navPagos">
+      <span>💰</span>
+      Pagos
+    </button>
+  </div>
+  
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============== CONFIG ==============
+var SCRIPT_URL = 'TU_SCRIPT_URL_AQUI';
+
+// ============== STATE ==============
+var currentUser = null;
+var currentRole = null;
+var currentMes = new Date().getMonth() + 1;
+var currentAnio = new Date().getFullYear();
+var precioHora = 4500;
+
+var MESES = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+var DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+// ============== API ==============
+function apiCall(data) {
+  return new Promise(function(resolve, reject) {
+    var formData = new FormData();
+    formData.append('payload', JSON.stringify(data));
+    
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: formData
+    })
+    .then(function(r) { return r.json(); })
+    .then(resolve)
+    .catch(reject);
+  });
+}
+
+// ============== LOGIN ==============
+function selectUser(user) {
+  currentUser = user;
+  document.getElementById('btnCarolina').classList.toggle('active', user === 'carolina');
+  document.getElementById('btnAdmin').classList.toggle('active', user === 'admin');
+  document.getElementById('pinInput').focus();
+}
+
+function doLogin() {
+  var pin = document.getElementById('pinInput').value;
+  var user = currentUser || 'carolina';
+  
+  if (!pin) {
+    showError('Ingresá el PIN');
+    return;
+  }
+  
+  document.getElementById('btnLogin').disabled = true;
+  document.getElementById('btnLogin').textContent = 'Entrando...';
+  
+  apiCall({action: 'login', user: user, pin: pin})
+    .then(function(res) {
+      if (res.ok) {
+        currentRole = res.role;
+        currentUser = user;
+        showApp();
+      } else {
+        showError(res.error || 'PIN incorrecto');
+      }
+    })
+    .catch(function() {
+      showError('Error de conexión');
+    })
+    .finally(function() {
+      document.getElementById('btnLogin').disabled = false;
+      document.getElementById('btnLogin').textContent = 'Entrar';
+    });
+}
+
+function showError(msg) {
+  var el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+function doLogout() {
+  currentUser = null;
+  currentRole = null;
+  document.getElementById('pinInput').value = '';
+  document.getElementById('loginError').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('appScreen').classList.add('hidden');
+}
+
+// ============== APP ==============
+function showApp() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  
+  var displayName = currentRole === 'admin' ? '👨‍💼 Admin' : '👩 Carolina';
+  document.getElementById('userDisplay').textContent = displayName;
+  
+  if (currentRole === 'admin') {
+    document.getElementById('carolinaView').classList.add('hidden');
+    document.getElementById('adminView').classList.remove('hidden');
+    document.getElementById('bottomNav').classList.remove('hidden');
+    loadConfig();
+    loadHistorial();
+  } else {
+    document.getElementById('carolinaView').classList.remove('hidden');
+    document.getElementById('adminView').classList.add('hidden');
+    document.getElementById('bottomNav').classList.add('hidden');
+  }
+  
+  // Set default date
+  document.getElementById('inputFecha').value = new Date().toISOString().split('T')[0];
+  
+  updateMesDisplay();
+  loadResumen();
+  loadRegistros();
+}
+
+// ============== MES ==============
+function updateMesDisplay() {
+  document.getElementById('mesDisplay').textContent = MESES[currentMes] + ' ' + currentAnio;
+}
+
+function cambiarMes(delta) {
+  currentMes += delta;
+  if (currentMes > 12) {
+    currentMes = 1;
+    currentAnio++;
+  } else if (currentMes < 1) {
+    currentMes = 12;
+    currentAnio--;
+  }
+  updateMesDisplay();
+  loadResumen();
+  loadRegistros();
+}
+
+// ============== RESUMEN ==============
+function loadResumen() {
+  apiCall({action: 'getResumenMensual', mes: currentMes, anio: currentAnio})
+    .then(function(res) {
+      if (res.ok) {
+        precioHora = res.precioHora;
+        
+        // Carolina view
+        document.getElementById('totalHoras').textContent = res.totalHoras;
+        document.getElementById('precioHora').textContent = formatMoney(res.precioHora);
+        document.getElementById('montoCobrar').textContent = formatMoney(res.montoCobrar);
+        
+        // Admin view
+        if (currentRole === 'admin') {
+          document.getElementById('adminTotalHoras').textContent = res.totalHoras;
+          document.getElementById('adminPrecioHora').textContent = formatMoney(res.precioHora);
+          document.getElementById('adminMontoCobrar').textContent = formatMoney(res.montoCobrar);
+          document.getElementById('adminMontoPagado').textContent = formatMoney(res.montoPagado);
+          
+          document.getElementById('inputMontoPago').value = res.montoPagado || '';
+          document.getElementById('inputFechaPago').value = res.fechaPago || new Date().toISOString().split('T')[0];
+          
+          // Desglose
+          var desglose = '<div class="historial-item">' +
+            '<div><div class="historial-mes">Cuidado</div><div class="historial-horas">' + res.horasCuidado + ' horas</div></div>' +
+            '<div class="historial-cobrar">' + formatMoney(res.horasCuidado * res.precioHora) + '</div>' +
+          '</div>' +
+          '<div class="historial-item">' +
+            '<div><div class="historial-mes">Limpieza</div><div class="historial-horas">' + res.horasLimpieza + ' horas</div></div>' +
+            '<div class="historial-cobrar">' + formatMoney(res.horasLimpieza * res.precioHora) + '</div>' +
+          '</div>';
+          document.getElementById('desgloseMes').innerHTML = desglose;
+        }
+      }
+    });
+}
+
+// ============== REGISTROS ==============
+function loadRegistros() {
+  var container = document.getElementById('registrosList');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+  
+  apiCall({action: 'getHorasMes', mes: currentMes, anio: currentAnio})
+    .then(function(res) {
+      if (res.ok) {
+        if (res.registros.length === 0) {
+          container.innerHTML = '<div class="empty-state"><span>📅</span>No hay registros este mes</div>';
+          return;
+        }
+        
+        var html = '';
+        res.registros.forEach(function(r) {
+          var fecha = new Date(r.fecha + 'T12:00:00');
+          var dia = DIAS[fecha.getDay()];
+          var fechaStr = fecha.getDate() + '/' + (fecha.getMonth() + 1);
+          var tipoClass = r.tipo === 'Limpieza' ? 'limpieza' : '';
+          var tipoIcon = r.tipo === 'Limpieza' ? '🧹' : '🧒';
+          
+          html += '<div class="registro-item">' +
+            '<div>' +
+              '<div class="registro-fecha">' + dia + ' ' + fechaStr + '</div>' +
+              '<span class="registro-tipo ' + tipoClass + '">' + tipoIcon + ' ' + r.tipo + '</span>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span class="registro-horas">' + r.horas + 'h</span>' +
+              '<button class="registro-delete" onclick="eliminarRegistro(' + r.id + ')">×</button>' +
+            '</div>' +
+          '</div>';
+        });
+        container.innerHTML = html;
+      }
+    });
+}
+
+function registrarHoras() {
+  var fecha = document.getElementById('inputFecha').value;
+  var horas = parseFloat(document.getElementById('inputHoras').value);
+  var tipo = document.getElementById('inputTipo').value;
+  
+  if (!fecha || !horas) {
+    showToast('Completá fecha y horas');
+    return;
+  }
+  
+  apiCall({action: 'registrarHoras', fecha: fecha, horas: horas, tipo: tipo})
+    .then(function(res) {
+      if (res.ok) {
+        showToast('Registro guardado ✓');
+        document.getElementById('inputHoras').value = '';
+        loadRegistros();
+        loadResumen();
+      }
+    });
+}
+
+function eliminarRegistro(id) {
+  if (!confirm('¿Eliminar este registro?')) return;
+  
+  apiCall({action: 'eliminarRegistro', id: id})
+    .then(function(res) {
+      if (res.ok) {
+        showToast('Registro eliminado');
+        loadRegistros();
+        loadResumen();
+      }
+    });
+}
+
+// ============== ADMIN ==============
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  document.querySelectorAll('.tab-content').forEach(function(content) {
+    content.classList.remove('active');
+  });
+  
+  event.target.classList.add('active');
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  
+  if (tab === 'resumen') loadHistorial();
+}
+
+function navTo(section) {
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  document.getElementById('nav' + section.charAt(0).toUpperCase() + section.slice(1)).classList.add('active');
+  
+  if (section === 'horas') {
+    document.getElementById('carolinaView').classList.remove('hidden');
+    document.getElementById('adminView').classList.add('hidden');
+  } else {
+    document.getElementById('carolinaView').classList.add('hidden');
+    document.getElementById('adminView').classList.remove('hidden');
+    switchTab(section);
+  }
+}
+
+function loadHistorial() {
+  apiCall({action: 'getHistorial'})
+    .then(function(res) {
+      if (res.ok) {
+        var html = '';
+        res.historial.forEach(function(h) {
+          var estadoClass = h.montoPagado >= h.montoCobrar ? 'historial-pagado' : 'historial-pendiente';
+          var estadoText = h.montoPagado >= h.montoCobrar ? 
+            '✓ Pagado ' + (h.fechaPago || '') : 
+            'Pendiente: ' + formatMoney(h.montoCobrar - h.montoPagado);
+          
+          html += '<div class="historial-item">' +
+            '<div>' +
+              '<div class="historial-mes">' + MESES[h.mes] + ' ' + h.anio + '</div>' +
+              '<div class="historial-horas">' + h.horas + ' horas</div>' +
+            '</div>' +
+            '<div class="historial-monto">' +
+              '<div class="historial-cobrar">' + formatMoney(h.montoCobrar) + '</div>' +
+              '<div class="' + estadoClass + '">' + estadoText + '</div>' +
+            '</div>' +
+          '</div>';
+        });
+        document.getElementById('historialList').innerHTML = html || '<div class="empty-state">Sin historial</div>';
+      }
+    });
+}
+
+function registrarPago() {
+  var monto = parseFloat(document.getElementById('inputMontoPago').value);
+  var fecha = document.getElementById('inputFechaPago').value;
+  
+  if (!monto || !fecha) {
+    showToast('Completá monto y fecha');
+    return;
+  }
+  
+  apiCall({action: 'registrarPago', mes: currentMes, anio: currentAnio, monto: monto, fecha: fecha})
+    .then(function(res) {
+      if (res.ok) {
+        showToast('Pago registrado ✓');
+        loadResumen();
+        loadHistorial();
+      }
+    });
+}
+
+function loadConfig() {
+  apiCall({action: 'getConfig'})
+    .then(function(res) {
+      if (res.ok) {
+        document.getElementById('configPrecioHora').value = res.precioHora;
+      }
+    });
+}
+
+function guardarConfig() {
+  var precio = parseFloat(document.getElementById('configPrecioHora').value);
+  
+  if (!precio) {
+    showToast('Ingresá un precio válido');
+    return;
+  }
+  
+  apiCall({action: 'setConfig', precioHora: precio})
+    .then(function(res) {
+      if (res.ok) {
+        showToast('Configuración guardada ✓');
+        loadResumen();
+      }
+    });
+}
+
+// ============== UTILS ==============
+function formatMoney(n) {
+  return '$' + Math.round(n || 0).toLocaleString('es-AR');
+}
+
+function showToast(msg) {
+  var toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(function() {
+    toast.classList.remove('show');
+  }, 2500);
+}
+
+// ============== INIT ==============
+document.getElementById('pinInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+selectUser('carolina');
+</script>
+
+</body>
+</html>
